@@ -1,0 +1,13 @@
+ros-dashing-rcpputils (0.1.0-4bionic) bionic; urgency=high
+
+  * Fixed leak in test_basic.cpp. (#9 <https://github.com/ros2/rcpputils/issues/9>)
+  * Added CODEOWNERS file. (#10 <https://github.com/ros2/rcpputils/issues/10>)
+  * Added commonly-used filesystem helper to utils. (#5 <https://github.com/ros2/rcpputils/issues/5>)
+  * Fixed thread_safety_annotation filename to .hpp. (#6 <https://github.com/ros2/rcpputils/issues/6>)
+  * Added section about DCO to CONTRIBUTING.md.
+  * Added thread annotation macros. (#2 <https://github.com/ros2/rcpputils/issues/2>)
+  * Contributors: Dirk Thomas, Emerson Knapp, Michael Carroll, Thomas Moulard
+
+ -- Emerson Knapp <eknapp@amazon.com>  Sat, 13 Apr 2019 07:00:00 -0000
+
+
