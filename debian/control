@@ -1,0 +1,13 @@
+Source: ros-dashing-rcpputils
+Section: misc
+Priority: extra
+Maintainer: Emerson Knapp <eknapp@amazon.com>
+Build-Depends: debhelper (>= 9.0.0), ros-dashing-ament-cmake, ros-dashing-ament-cmake-gtest, ros-dashing-ament-lint-auto, ros-dashing-ament-lint-common, ros-dashing-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-dashing-rcpputils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-dashing-ros-workspace
+Description: Package containing utility code for C++.
+ Currently only Clang thread safety annotation macros
