@@ -160,3 +160,31 @@ TEST(TestFilesystemHelper, create_directories)
   auto p = path(build_directory_path());
   EXPECT_TRUE(rcpputils::fs::create_directories(p));
 }
+
+TEST(TestFilesystemHelper, remove_extension)
+{
+  auto p = path("foo.txt");
+  p = rcpputils::fs::remove_extension(p.string());
+  EXPECT_EQ("foo", p.string());
+}
+
+TEST(TestFilesystemHelper, remove_extensions)
+{
+  auto p = path("foo.txt.compress");
+  p = rcpputils::fs::remove_extension(p, 2);
+  EXPECT_EQ("foo", p.string());
+}
+
+TEST(TestFilesystemHelper, remove_extensions_overcount)
+{
+  auto p = path("foo.txt.compress");
+  p = rcpputils::fs::remove_extension(p, 4);
+  EXPECT_EQ("foo", p.string());
+}
+
+TEST(TestFilesystemHelper, remove_extension_no_extension)
+{
+  auto p = path("foo");
+  p = rcpputils::fs::remove_extension(p);
+  EXPECT_EQ("foo", p.string());
+}

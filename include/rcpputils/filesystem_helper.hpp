@@ -72,6 +72,11 @@ namespace fs
 
 static constexpr const char kPreferredSeparator = RCPPUTILS_IMPL_OS_DIRSEP;
 
+/**
+ * path is meant to be a drop-in replacement of https://en.cppreference.com/w/cpp/filesystem/path.
+ * It must conform to the same standard described and cannot include methods that are not
+ * incorporated there.
+ */
 class path
 {
 public:
@@ -85,6 +90,8 @@ public:
     std::replace(path_.begin(), path_.end(), '\\', kPreferredSeparator);
     std::replace(path_.begin(), path_.end(), '/', kPreferredSeparator);
   }
+
+  path(const path & p) = default;
 
   std::string string() const
   {
@@ -186,6 +193,28 @@ inline bool create_directories(const path & p)
 #endif
   }
   return true;
+}
+
+/**
+ * Remove extension(s) from a path. An extension is defined as text starting from the end of a
+ * path to the first period (.) character.
+ *
+ * \param file_path The file path string.
+ * \param n_times The number of extensions to remove if there are multiple extensions.
+ * \return The path object.
+ */
+inline path remove_extension(const path & file_path, int n_times = 1)
+{
+  path new_path(file_path);
+  for (int i = 0; i < n_times; i++) {
+    const auto new_path_str = new_path.string();
+    const auto last_dot = new_path_str.find_last_of('.');
+    if (last_dot == std::string::npos) {
+      return new_path;
+    }
+    new_path = path(new_path_str.substr(0, last_dot));
+  }
+  return new_path;
 }
 
 #undef RCPPUTILS_IMPL_OS_DIRSEP
