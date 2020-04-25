@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
 #include <string>
 
 #include "rcpputils/filesystem_helper.hpp"
@@ -55,6 +56,13 @@ TEST(TestFilesystemHelper, join_path)
   } else {
     EXPECT_EQ("foo/bar", p.string());
   }
+}
+
+TEST(TestFilesystemHelper, parent_path)
+{
+  auto p = path("my") / path("path");
+
+  EXPECT_EQ(p.parent_path().string(), path("my").string());
 }
 
 TEST(TestFilesystemHelper, to_native_path)
@@ -150,15 +158,48 @@ TEST(TestFilesystemHelper, is_empty)
 }
 
 /**
- * Test create directories.
+ * Test filesystem manipulation API.
  *
  * NOTE: expects the current directory to be write-only, else test will fail.
  *
  */
-TEST(TestFilesystemHelper, create_directories)
+TEST(TestFilesystemHelper, filesystem_manipulation)
 {
-  auto p = path(build_directory_path());
-  EXPECT_TRUE(rcpputils::fs::create_directories(p));
+  auto dir = path(build_directory_path());
+  (void)rcpputils::fs::remove(dir);
+  EXPECT_FALSE(rcpputils::fs::exists(dir));
+  EXPECT_TRUE(rcpputils::fs::create_directories(dir));
+  EXPECT_TRUE(rcpputils::fs::exists(dir));
+  EXPECT_TRUE(rcpputils::fs::is_directory(dir));
+  EXPECT_FALSE(rcpputils::fs::is_regular_file(dir));
+
+  auto file = dir / "test_file.txt";
+  uint64_t expected_file_size = 0;
+  {
+    std::ofstream output_buffer{file.string()};
+    output_buffer << "test";
+    expected_file_size = static_cast<uint64_t>(output_buffer.tellp());
+  }
+
+  EXPECT_TRUE(rcpputils::fs::exists(file));
+  EXPECT_TRUE(rcpputils::fs::is_regular_file(file));
+  EXPECT_FALSE(rcpputils::fs::is_directory(file));
+  EXPECT_GE(rcpputils::fs::file_size(file), expected_file_size);
+  EXPECT_THROW(rcpputils::fs::file_size(dir), std::system_error) <<
+    "file_size is only applicable for files!";
+  EXPECT_FALSE(rcpputils::fs::remove(dir));
+  EXPECT_TRUE(rcpputils::fs::remove(file));
+  EXPECT_THROW(rcpputils::fs::file_size(file), std::system_error);
+  EXPECT_TRUE(rcpputils::fs::remove(dir));
+  EXPECT_FALSE(rcpputils::fs::exists(file));
+  EXPECT_FALSE(rcpputils::fs::exists(dir));
+  auto temp_dir = rcpputils::fs::temp_directory_path();
+  temp_dir = temp_dir / "rcpputils" / "test_folder";
+  EXPECT_FALSE(rcpputils::fs::exists(temp_dir));
+  EXPECT_TRUE(rcpputils::fs::create_directories(temp_dir));
+  EXPECT_TRUE(rcpputils::fs::exists(temp_dir));
+  EXPECT_TRUE(rcpputils::fs::remove(temp_dir));
+  EXPECT_TRUE(rcpputils::fs::remove(temp_dir.parent_path()));
 }
 
 TEST(TestFilesystemHelper, remove_extension)

@@ -33,9 +33,10 @@
 // This file is originally from:
 // https://github.com/ros/pluginlib/blob/1a4de29fa55173e9b897ca8ff57ebc88c047e0b3/pluginlib/include/pluginlib/impl/filesystem_helper.hpp
 
-/**
- * If std::filesystem is not available the necessary functions are emulated.
+/*! \file filesystem_helper.hpp
+ * \brief Cross-platform filesystem helper functions and additional emulation of [std::filesystem](https://en.cppreference.com/w/cpp/filesystem).
  *
+ * If std::filesystem is not available the necessary functions are emulated.
  * Note: Once std::filesystem is supported on all ROS2 platforms, this class
  * can be deprecated in favor of the built-in functionality.
  */
@@ -43,9 +44,17 @@
 #ifndef RCPPUTILS__FILESYSTEM_HELPER_HPP_
 #define RCPPUTILS__FILESYSTEM_HELPER_HPP_
 
+#include <sys/stat.h>
+
 #include <algorithm>
 #include <string>
 #include <vector>
+
+/**
+ * \def RCPPUTILS_IMPL_OS_DIRSEP
+ *
+ * A definition for this platforms string path separator
+ */
 
 #ifdef _WIN32
 #  define RCPPUTILS_IMPL_OS_DIRSEP '\\'
@@ -54,11 +63,12 @@
 #endif
 
 #ifdef _WIN32
+#  include <windows.h>
 #  include <direct.h>
+#  include <fileapi.h>
 #  include <io.h>
 #  define access _access_s
 #else
-#  include <sys/stat.h>
 #  include <sys/types.h>
 #  include <unistd.h>
 #endif
@@ -73,17 +83,26 @@ namespace fs
 static constexpr const char kPreferredSeparator = RCPPUTILS_IMPL_OS_DIRSEP;
 
 /**
- * path is meant to be a drop-in replacement of https://en.cppreference.com/w/cpp/filesystem/path.
+ * \brief Drop-in replacement for [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path).
+ *
  * It must conform to the same standard described and cannot include methods that are not
  * incorporated there.
  */
 class path
 {
 public:
+  /**
+    * \brief Constructs an empty path.
+    */
   path()
   : path("")
   {}
 
+  /**
+   * \brief Conversion constructor from a std::string path.
+   *
+   * \param p A string path split by the platform's string path separator.
+   */
   path(const std::string & p)  // NOLINT(runtime/explicit): this is a conversion constructor
   : path_(p), path_as_vector_(split(p, kPreferredSeparator))
   {
@@ -91,52 +110,173 @@ public:
     std::replace(path_.begin(), path_.end(), '/', kPreferredSeparator);
   }
 
+  /**
+    * \brief Copy constructor.
+    */
   path(const path & p) = default;
 
+  /**
+   * \brief Get the path delimited using this system's path separator.
+   *
+   * \return The path as a string
+   */
   std::string string() const
   {
     return path_;
   }
 
+  /**
+   * \brief Check if this path exists.
+   *
+   * \return True if the path exists, false otherwise.
+   */
   bool exists() const
   {
     return access(path_.c_str(), 0) == 0;
   }
 
+  /**
+   * \brief Check if the path exists and it is a directory.
+   *
+   * \return True if the path is an existing directory, false otherwise.
+   */
+  bool is_directory() const noexcept
+  {
+    struct stat stat_buffer;
+    const auto rc = stat(path_.c_str(), &stat_buffer);
+
+    if (rc != 0) {
+      return false;
+    }
+
+#ifdef _WIN32
+    return (stat_buffer.st_mode & S_IFDIR) == S_IFDIR;
+#else
+    return S_ISDIR(stat_buffer.st_mode);
+#endif
+  }
+
+  /**
+   * \brief Check if the path is a regular file.
+   *
+   * \return True if the file is an existing regular file, false otherwise.
+   */
+  bool is_regular_file() const noexcept
+  {
+    struct stat stat_buffer;
+    const auto rc = stat(path_.c_str(), &stat_buffer);
+
+    if (rc != 0) {
+      return false;
+    }
+
+#ifdef _WIN32
+    return (stat_buffer.st_mode & S_IFREG) == S_IFREG;
+#else
+    return S_ISREG(stat_buffer.st_mode);
+#endif
+  }
+
+  /**
+  * \brief Return the size of the file in bytes.
+  *
+  * \return size of file in bytes
+  * \throws std::system_error
+  */
+  uint64_t file_size() const
+  {
+    if (is_directory()) {
+      auto ec = std::make_error_code(std::errc::is_a_directory);
+      throw std::system_error{ec, "cannot get file size"};
+    }
+
+    struct stat stat_buffer;
+    const auto rc = stat(path_.c_str(), &stat_buffer);
+
+    if (rc != 0) {
+      std::error_code ec{errno, std::system_category()};
+      errno = 0;
+      throw std::system_error{ec, "cannot get file size"};
+    } else {
+      return static_cast<uint64_t>(stat_buffer.st_size);
+    }
+  }
+
+  /**
+  * \brief Check if the path is empty.
+  *
+  * \return True if the path is empty, false otherwise.
+  */
   bool empty() const
   {
     return path_.empty();
   }
 
+  /**
+  * \brief Check if the path is an absolute path.
+  *
+  * \return True if the path is absolute, false otherwise.
+  */
   bool is_absolute() const
   {
     return path_.compare(0, 1, "/") == 0 || path_.compare(1, 2, ":\\") == 0;
   }
 
+  /**
+  * \brief Const iterator to first element of this path.
+  *
+  * \return A const iterator to the first element.
+  */
   std::vector<std::string>::const_iterator cbegin() const
   {
     return path_as_vector_.cbegin();
   }
 
+  /**
+  * Const iterator to one past the last element of this path.
+  *
+  * return A const iterator to one past the last element of the path.
+  */
   std::vector<std::string>::const_iterator cend() const
   {
     return path_as_vector_.cend();
   }
 
+  /**
+  * \brief Get the parent directory of this path.
+  *
+  * \return A path to the parent directory.
+  */
   path parent_path() const
   {
-    path parent("");
+    path parent;
     for (auto it = this->cbegin(); it != --this->cend(); ++it) {
-      parent /= *it;
+      if (!parent.empty() || it->empty()) {
+        parent /= *it;
+      } else {
+        parent = *it;
+      }
     }
     return parent;
   }
 
+  /**
+  * \brief Get the last element in this path.
+  *
+  * If this path points to a directory, it will return the directory name.
+  *
+  * \return The last element in this path
+  */
   path filename() const
   {
     return path_.empty() ? path() : *--this->cend();
   }
 
+  /**
+  * \brief Get a relative path to the component including and following the last '.'.
+  *
+  * \return The string extension
+  */
   path extension() const
   {
     const char * delimiter = ".";
@@ -144,22 +284,46 @@ public:
     return split_fname.size() == 1 ? path("") : path("." + split_fname.back());
   }
 
+  /**
+  * \brief Concatenate a path and a string into a single path.
+  *
+  * \param other the string compnoent to concatenate
+  * \return The combined path of this and other.
+  */
   path operator/(const std::string & other)
   {
     return this->operator/(path(other));
   }
 
+  /**
+  * \brief Append a string component to this path.
+  *
+  * \param other the string component to append
+  * \return *this
+  */
   path & operator/=(const std::string & other)
   {
     this->operator/=(path(other));
     return *this;
   }
 
+  /**
+  * \brief Concatenate two paths together.
+  *
+  * \param other the path to append
+  * \return The combined path.
+  */
   path operator/(const path & other)
   {
     return path(*this).operator/=(other);
   }
 
+  /**
+  * \brief Append a string component to this path.
+  *
+  * \param other the string component to append
+  * \return *this
+  */
   path & operator/=(const path & other)
   {
     this->path_ += kPreferredSeparator + other.string();
@@ -174,30 +338,136 @@ private:
   std::vector<std::string> path_as_vector_;
 };
 
+/**
+ * \brief Check if the path is a regular file.
+ *
+ * \param The path to check
+ * \return True if the path exists, false otherwise.
+ */
+inline bool is_regular_file(const path & p) noexcept
+{
+  return p.is_regular_file();
+}
+
+/**
+ * \brief Check if the path is a directory.
+ *
+ * \param path The path to check
+ * \return True if the path is an existing directory, false otherwise.
+ */
+inline bool is_directory(const path & p) noexcept
+{
+  return p.is_directory();
+}
+
+/**
+ * \brief Get the file size of the path.
+ *
+ * \param The path to get the file size of.
+ * \return The file size in bytes.
+ *
+ * \throws std::sytem_error
+ */
+inline uint64_t file_size(const path & p)
+{
+  return p.file_size();
+}
+
+/**
+ * \brief Check if a path exists.
+ *
+ * \param path_to_check The path to check.
+ * \return True if the path exists, false otherwise.
+ */
 inline bool exists(const path & path_to_check)
 {
   return path_to_check.exists();
 }
 
-inline bool create_directories(const path & p)
+
+/**
+ * \brief Get a path to a location in the temporary directory, if it's available.
+ *
+ * \return A path to a randomly generated file location in the temporary directory.
+ */
+inline path temp_directory_path()
 {
-  path p_built;
-
-  for (auto it = p.cbegin(); it != p.cend(); ++it) {
-    p_built /= *it;
-
 #ifdef _WIN32
-    _mkdir(p_built.string().c_str());
-#else
-    mkdir(p_built.string().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#ifdef UNICODE
+#error "rcpputils::fs does not support Unicode paths"
 #endif
+  TCHAR temp_path[MAX_PATH];
+  DWORD size = GetTempPathA(MAX_PATH, temp_path);
+  if (size > MAX_PATH || size == 0) {
+    std::error_code ec(static_cast<int>(GetLastError()), std::system_category());
+    throw std::system_error(ec, "cannot get temporary directory path");
   }
-  return true;
+  temp_path[size] = '\0';
+#else
+  const char * temp_path = getenv("TMPDIR");
+  if (!temp_path) {
+    temp_path = "/tmp";
+  }
+#endif
+  return path(temp_path);
 }
 
 /**
- * Remove extension(s) from a path. An extension is defined as text starting from the end of a
- * path to the first period (.) character.
+ * \brief Create a directory with the given path p.
+ *
+ * This builds directories recursively and will skip directories if they are already created.
+ * \return Return true if the directory is created, false otherwise.
+ */
+inline bool create_directories(const path & p)
+{
+  path p_built;
+  int status = 0;
+
+  for (auto it = p.cbegin(); it != p.cend() && status == 0; ++it) {
+    if (!p_built.empty() || it->empty()) {
+      p_built /= *it;
+    } else {
+      p_built = *it;
+    }
+    if (!p_built.exists()) {
+#ifdef _WIN32
+      status = _mkdir(p_built.string().c_str());
+#else
+      status = mkdir(p_built.string().c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+#endif
+    }
+  }
+  return status == 0;
+}
+
+/**
+ * \brief Remove the file or directory at the path p.
+ *
+ * \param The path of the object to remove.
+ * \return true if the file exists and it was successfully removed, false otherwise.
+ */
+inline bool remove(const path & p)
+{
+#ifdef _WIN32
+  struct _stat s;
+  if (_stat(p.string().c_str(), &s) == 0) {
+    if (s.st_mode & S_IFDIR) {
+      return _rmdir(p.string().c_str()) == 0;
+    }
+    if (s.st_mode & S_IFREG) {
+      return ::remove(p.string().c_str()) == 0;
+    }
+  }
+  return false;
+#else
+  return ::remove(p.string().c_str()) == 0;
+#endif
+}
+
+/**
+ * \brief Remove extension(s) from a path.
+ *
+ * An extension is defined as text starting from the end of a path to the first period (.) character.
  *
  * \param file_path The file path string.
  * \param n_times The number of extensions to remove if there are multiple extensions.
