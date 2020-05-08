@@ -1,3 +1,26 @@
+## rcpputils (foxy) - 0.3.1-1
+
+The packages in the `rcpputils` repository were released into the `foxy` distro by running `/usr/bin/bloom-release --track foxy --rosdistro foxy rcpputils` on `Fri, 08 May 2020 15:55:56 -0000`
+
+The `rcpputils` package was released.
+
+Version of package(s) in repository `rcpputils`:
+
+- upstream repository: https://github.com/ros2/rcpputils.git
+- release repository: https://github.com/ros2-gbp/rcpputils-release.git
+- rosdistro version: `0.3.0-2`
+- old version: `0.3.0-2`
+- new version: `0.3.1-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.7`
+- catkin_pkg version: `0.4.18`
+- rosdep version: `0.19.0`
+- rosdistro version: `0.8.1`
+- vcstools version: `0.1.42`
+
+
 ## rcpputils (foxy) - 0.3.0-2
 
 The packages in the `rcpputils` repository were released into the `foxy` distro by running `/usr/bin/bloom-release rcpputils --rosdistro foxy` on `Sat, 25 Apr 2020 00:19:49 -0000`
