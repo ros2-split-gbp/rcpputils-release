@@ -1,0 +1,83 @@
+ros-foxy-rcpputils (1.0.0-1focal) focal; urgency=high
+
+  * Remove mention of random file from temporary_directory_path doc (#64 <https://github.com/ros2/rcpputils/issues/64>)
+  * Contributors: Scott K Logan
+
+ -- Emerson Knapp <eknapp@amazon.com>  Tue, 26 May 2020 00:00:00 -0000
+
+ros-foxy-rcpputils (0.3.1-1focal) focal; urgency=high
+
+  * Fix Action CI by using released upload-artifact instead of master (#61 <https://github.com/ros2/rcpputils/issues/61>)
+  * Quality declaration (#47 <https://github.com/ros2/rcpputils/issues/47>)
+  * Contributors: Emerson Knapp, brawner
+
+ -- Emerson Knapp <eknapp@amazon.com>  Fri, 08 May 2020 00:00:00 -0000
+
+ros-foxy-rcpputils (0.3.0-1focal) focal; urgency=high
+
+  * Added shared library to feature list (#58 <https://github.com/ros2/rcpputils/issues/58>)
+  * export targets in a addition to include directories / libraries (#57 <https://github.com/ros2/rcpputils/issues/57>)
+  * remove pointer for smart pointer (#56 <https://github.com/ros2/rcpputils/issues/56>)
+  * Added shared library class description to readme (#53 <https://github.com/ros2/rcpputils/issues/53>)
+  * Increased shared library tests (#51 <https://github.com/ros2/rcpputils/issues/51>)
+  * Removed duplicated split function (#54 <https://github.com/ros2/rcpputils/issues/54>)
+  * Exposed get_env_var (#55 <https://github.com/ros2/rcpputils/issues/55>)
+  * Added debug version for library names (#52 <https://github.com/ros2/rcpputils/issues/52>)
+  * Added unload_library method to shared_library (#50 <https://github.com/ros2/rcpputils/issues/50>)
+  * Included abstraction for rcutils::shared_library (#49 <https://github.com/ros2/rcpputils/issues/49>)
+  * Add more documentation and include doxyfile (#46 <https://github.com/ros2/rcpputils/issues/46>)
+  * Update README.md with license and build badges. (#45 <https://github.com/ros2/rcpputils/issues/45>)
+  * Update README to mention assertion helper functions (#43 <https://github.com/ros2/rcpputils/issues/43>)
+  * Add rcpputils::fs::file_size and rcpputils::fs::is_directory (#41 <https://github.com/ros2/rcpputils/issues/41>)
+  * Make assert functions accept an optional string. (#42 <https://github.com/ros2/rcpputils/issues/42>)
+  * Add functions for C++ assertions (#31 <https://github.com/ros2/rcpputils/issues/31>)
+  * remove reference for pointer traits (#38 <https://github.com/ros2/rcpputils/issues/38>)
+  * code style only: wrap after open parenthesis if not in one line (#36 <https://github.com/ros2/rcpputils/issues/36>)
+  * Bug fixes for rcpputils::fs API (#35 <https://github.com/ros2/rcpputils/issues/35>)
+    * Ensure rcpputils::fs::create_directories works with absolute paths.
+    * Implement temp_directory_path() for testing purposes.
+    * Fix rcpputils::fs::path::parent_path() method.
+  * Add build and test workflow (#33 <https://github.com/ros2/rcpputils/issues/33>)
+  * Add linting workflow (#32 <https://github.com/ros2/rcpputils/issues/32>)
+  * Fix filesystem helpers for directory manipulation. (#30 <https://github.com/ros2/rcpputils/issues/30>)
+  * Contributors: Alejandro Hernández Cordero, Dirk Thomas, Emerson Knapp, Karsten Knese, Michel Hidalgo, Zachary Michaels
+
+ -- Emerson Knapp <eknapp@amazon.com>  Fri, 24 Apr 2020 00:00:00 -0000
+
+ros-foxy-rcpputils (0.2.1-1focal) focal; urgency=high
+
+  * add new function to remove the extension of a file (#27 <https://github.com/ros2/rcpputils/pull/27>)
+  * Contributors: Anas Abou Allaban
+
+ -- Emerson Knapp <eknapp@amazon.com>  Tue, 12 Nov 2019 00:00:00 -0000
+
+ros-foxy-rcpputils (0.2.0-1focal) focal; urgency=high
+
+  * find_library: Centralize functionality here (#25 <https://github.com/ros2/rcpputils/issues/25>)
+  * Implement join() (#20 <https://github.com/ros2/rcpputils/issues/20>)
+  * Rename test (#21 <https://github.com/ros2/rcpputils/issues/21>)
+  * use _WIN32 instead of WIN32 (#24 <https://github.com/ros2/rcpputils/issues/24>)
+  * Update README.md and package.xml (#22 <https://github.com/ros2/rcpputils/issues/22>)
+  * Fix typo (#23 <https://github.com/ros2/rcpputils/issues/23>)
+  * type trait rcpputils::is_pointer<T>` (#19 <https://github.com/ros2/rcpputils/issues/19>)
+  * File extension addition for camera calibration parser (#18 <https://github.com/ros2/rcpputils/issues/18>)
+  * Add endian helper until C++20 (#16 <https://github.com/ros2/rcpputils/issues/16>)
+  * use iterators for split (#14 <https://github.com/ros2/rcpputils/issues/14>)
+  * Add function 'find_and_replace' (#13 <https://github.com/ros2/rcpputils/issues/13>)
+  * Contributors: Andreas Klintberg, Dirk Thomas, Jacob Perron, Karsten Knese, Michael Carroll, Michel Hidalgo, Tully Foote
+
+ -- Emerson Knapp <eknapp@amazon.com>  Tue, 24 Sep 2019 00:00:00 -0000
+
+ros-foxy-rcpputils (0.1.0-1focal) focal; urgency=high
+
+  * Fixed leak in test_basic.cpp. (#9 <https://github.com/ros2/rcpputils/issues/9>)
+  * Added CODEOWNERS file. (#10 <https://github.com/ros2/rcpputils/issues/10>)
+  * Added commonly-used filesystem helper to utils. (#5 <https://github.com/ros2/rcpputils/issues/5>)
+  * Fixed thread_safety_annotation filename to .hpp. (#6 <https://github.com/ros2/rcpputils/issues/6>)
+  * Added section about DCO to CONTRIBUTING.md.
+  * Added thread annotation macros. (#2 <https://github.com/ros2/rcpputils/issues/2>)
+  * Contributors: Dirk Thomas, Emerson Knapp, Michael Carroll, Thomas Moulard
+
+ -- Emerson Knapp <eknapp@amazon.com>  Sat, 13 Apr 2019 00:00:00 -0000
+
+
