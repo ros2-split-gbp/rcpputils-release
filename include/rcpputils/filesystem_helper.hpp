@@ -44,6 +44,7 @@
 #ifndef RCPPUTILS__FILESYSTEM_HELPER_HPP_
 #define RCPPUTILS__FILESYSTEM_HELPER_HPP_
 
+#include <limits.h>
 #include <sys/stat.h>
 
 #include <algorithm>
@@ -220,7 +221,8 @@ public:
   bool is_absolute() const
   {
     return path_.size() > 0 &&
-           (path_.compare(0, 1, "/") == 0 || path_.compare(1, 2, ":\\") == 0);
+           (path_.compare(0, 1, std::string(1, kPreferredSeparator)) == 0 ||
+           this->is_absolute_with_drive_letter());
   }
 
   /**
@@ -250,6 +252,30 @@ public:
   */
   path parent_path() const
   {
+    // Edge case: empty path
+    if (this->empty()) {
+      return path("");
+    }
+
+    // Edge case: if path only consists of one part, then return '.' or '/'
+    //            depending if the path is absolute or not
+    if (1u == path_as_vector_.size()) {
+      if (this->is_absolute()) {
+        // Windows is tricky, since an absolute path may start with 'C:\\' or '\\'
+        if (this->is_absolute_with_drive_letter()) {
+          return path(path_as_vector_[0] + kPreferredSeparator);
+        }
+        return path(std::string(1, kPreferredSeparator));
+      }
+      return path(".");
+    }
+
+    // Edge case: with a path 'C:\\foo' we want to return 'C:\\' not 'C:'
+    // Don't drop the root directory from an absolute path on Windows starting with a letter drive
+    if (2u == path_as_vector_.size() && this->is_absolute_with_drive_letter()) {
+      return path(path_as_vector_[0] + kPreferredSeparator);
+    }
+
     path parent;
     for (auto it = this->cbegin(); it != --this->cend(); ++it) {
       if (!parent.empty() || it->empty()) {
@@ -327,14 +353,32 @@ public:
   */
   path & operator/=(const path & other)
   {
-    this->path_ += kPreferredSeparator + other.string();
-    this->path_as_vector_.insert(
-      std::end(this->path_as_vector_),
-      std::begin(other.path_as_vector_), std::end(other.path_as_vector_));
+    if (other.is_absolute()) {
+      this->path_ = other.path_;
+      this->path_as_vector_ = other.path_as_vector_;
+    } else {
+      this->path_ += kPreferredSeparator + other.string();
+      this->path_as_vector_.insert(
+        std::end(this->path_as_vector_),
+        std::begin(other.path_as_vector_), std::end(other.path_as_vector_));
+    }
     return *this;
   }
 
 private:
+  /// Returns true if the path is an absolute path with a drive letter on Windows
+  bool is_absolute_with_drive_letter() const
+  {
+#ifdef _WIN32
+    if (path_.empty()) {
+      return false;
+    }
+    return 0 == path_.compare(1, 2, ":\\");
+#else
+    return false;  // only Windows contains absolute paths starting with drive letters
+#endif
+  }
+
   std::string path_;
   std::vector<std::string> path_as_vector_;
 };
@@ -411,6 +455,33 @@ inline path temp_directory_path()
   }
 #endif
   return path(temp_path);
+}
+
+/**
+ * \brief Return current working directory.
+ *
+ * \return The current working directory.
+ *
+ * \throws std::system_error
+ */
+inline path current_path()
+{
+#ifdef _WIN32
+#ifdef UNICODE
+#error "rcpputils::fs does not support Unicode paths"
+#endif
+  char cwd[MAX_PATH];
+  if (nullptr == _getcwd(cwd, MAX_PATH)) {
+#else
+  char cwd[PATH_MAX];
+  if (nullptr == getcwd(cwd, PATH_MAX)) {
+#endif
+    std::error_code ec{errno, std::system_category()};
+    errno = 0;
+    throw std::system_error{ec, "cannot get current working directory"};
+  }
+
+  return path(cwd);
 }
 
 /**
