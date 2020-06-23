@@ -18,6 +18,7 @@
 #include <string>
 
 #include "rcpputils/filesystem_helper.hpp"
+#include "rcpputils/get_env.hpp"
 
 #ifdef _WIN32
 static constexpr const bool is_win32 = true;
@@ -49,20 +50,68 @@ std::string build_directory_path()
 
 TEST(TestFilesystemHelper, join_path)
 {
-  auto p = path("foo") / path("bar");
+  {
+    auto p = path("foo") / path("bar");
+    if (is_win32) {
+      EXPECT_EQ("foo\\bar", p.string());
+    } else {
+      EXPECT_EQ("foo/bar", p.string());
+    }
+  }
 
   if (is_win32) {
-    EXPECT_EQ("foo\\bar", p.string());
+    auto p = path("foo") / path("C:\\bar");
+    EXPECT_EQ("C:\\bar", p.string());
   } else {
-    EXPECT_EQ("foo/bar", p.string());
+    auto p = path("foo") / path("/bar");
+    EXPECT_EQ("/bar", p.string());
   }
 }
 
 TEST(TestFilesystemHelper, parent_path)
 {
-  auto p = path("my") / path("path");
-
-  EXPECT_EQ(p.parent_path().string(), path("my").string());
+  {
+    auto p = path("my") / path("path");
+    EXPECT_EQ(p.parent_path().string(), path("my").string());
+  }
+  {
+    auto p = path("foo");
+    EXPECT_EQ(p.parent_path().string(), ".");
+  }
+  {
+    if (is_win32) {
+      {
+        auto p = path("C:\\foo");
+        EXPECT_EQ(p.parent_path().string(), "C:\\");
+      }
+      {
+        auto p = path("\\foo");
+        EXPECT_EQ(p.parent_path().string(), "\\");
+      }
+    } else {
+      auto p = path("/foo");
+      EXPECT_EQ(p.parent_path().string(), "/");
+    }
+  }
+  {
+    if (is_win32) {
+      {
+        auto p = path("C:\\");
+        EXPECT_EQ(p.parent_path().string(), "C:\\");
+      }
+      {
+        auto p = path("\\");
+        EXPECT_EQ(p.parent_path().string(), "\\");
+      }
+    } else {
+      auto p = path("/");
+      EXPECT_EQ(p.parent_path().string(), "/");
+    }
+  }
+  {
+    auto p = path("");
+    EXPECT_EQ(p.parent_path().string(), "");
+  }
 }
 
 TEST(TestFilesystemHelper, to_native_path)
@@ -114,6 +163,14 @@ TEST(TestFilesystemHelper, is_absolute)
     }
     {
       auto p = path("C:/foo/bar/baz");
+      EXPECT_TRUE(p.is_absolute());
+    }
+    {
+      auto p = path("\\foo\\bar\\baz");
+      EXPECT_TRUE(p.is_absolute());
+    }
+    {
+      auto p = path("/foo/bar/baz");
       EXPECT_TRUE(p.is_absolute());
     }
     {
@@ -175,6 +232,31 @@ TEST(TestFilesystemHelper, is_empty)
 {
   auto p = path("");
   EXPECT_TRUE(p.empty());
+}
+
+TEST(TestFilesystemHelper, exists)
+{
+  {
+    auto p = path("");
+    EXPECT_FALSE(p.exists());
+  }
+  {
+    auto p = path(".");
+    EXPECT_TRUE(p.exists());
+  }
+  {
+    auto p = path("..");
+    EXPECT_TRUE(p.exists());
+  }
+  {
+    if (is_win32) {
+      auto p = path("\\");
+      EXPECT_TRUE(p.exists());
+    } else {
+      auto p = path("/");
+      EXPECT_TRUE(p.exists());
+    }
+  }
 }
 
 /**
@@ -248,4 +330,11 @@ TEST(TestFilesystemHelper, remove_extension_no_extension)
   auto p = path("foo");
   p = rcpputils::fs::remove_extension(p);
   EXPECT_EQ("foo", p.string());
+}
+
+TEST(TestFilesystemHelper, get_cwd)
+{
+  std::string expected_dir = rcpputils::get_env_var("EXPECTED_WORKING_DIRECTORY");
+  auto p = rcpputils::fs::current_path();
+  EXPECT_EQ(expected_dir, p.string());
 }
