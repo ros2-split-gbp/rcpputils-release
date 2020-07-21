@@ -1,3 +1,26 @@
+## rcpputils (rolling) - 2.0.0-1
+
+The packages in the `rcpputils` repository were released into the `rolling` distro by running `/Users/karsten/.pyenv/versions/3.7.4/bin/bloom-release -r rolling rcpputils --edit` on `Tue, 21 Jul 2020 19:42:59 -0000`
+
+The `rcpputils` package was released.
+
+Version of package(s) in repository `rcpputils`:
+
+- upstream repository: https://github.com/ros2/rcpputils.git
+- release repository: https://github.com/ros2-gbp/rcpputils-release.git
+- rosdistro version: `1.2.0-1`
+- old version: `1.2.0-1`
+- new version: `2.0.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.3`
+- catkin_pkg version: `0.4.16`
+- rosdep version: `0.17.1`
+- rosdistro version: `0.8.2`
+- vcstools version: `0.1.42`
+
+
 ## rcpputils (rolling) - 1.2.0-1
 
 The packages in the `rcpputils` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --rosdistro rolling --track rolling rcpputils` on `Fri, 26 Jun 2020 16:44:53 -0000`
