@@ -2,12 +2,28 @@
 Changelog for package rcpputils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.3.0 (2020-07-21)
+2.0.1 (2020-10-05)
 ------------------
-* Removed doxygen warnings (`#86 <https://github.com/ros2/rcpputils/issues/86>`_) (`#90 <https://github.com/ros2/rcpputils/issues/90>`_)
-* Add clamp header (`#85 <https://github.com/ros2/rcpputils/issues/85>`_) (`#88 <https://github.com/ros2/rcpputils/issues/88>`_)
-* Add remove_all to remove non-empty directories… (`#80 <https://github.com/ros2/rcpputils/issues/80>`_)
-* Contributors: Alejandro Hernández Cordero, Hunter L. Allen, Karsten Knese, Victor Lopez
+* Make sure that an existing path is a directory for create_directories (`#98 <https://github.com/ros2/rcpputils/issues/98>`_)
+* Transfer ownership to Open Robotics (`#100 <https://github.com/ros2/rcpputils/issues/100>`_)
+* Ensure -fPIC is used when building a static lib (`#93 <https://github.com/ros2/rcpputils/issues/93>`_)
+* Contributors: Christophe Bedard, Dirk Thomas, Louise Poubel, William Woodall
+
+2.0.0 (2020-07-21)
+------------------
+* Removed doxygen warnings (`#86 <https://github.com/ros2/rcpputils/issues/86>`_) (`#87 <https://github.com/ros2/rcpputils/issues/87>`_)
+* Add clamp header (`#85 <https://github.com/ros2/rcpputils/issues/85>`_)
+* Removed doxygen warnings (`#86 <https://github.com/ros2/rcpputils/issues/86>`_)
+* Split get_env_var() into header and implementation (`#83 <https://github.com/ros2/rcpputils/issues/83>`_)
+* Add cstring include for strcmp (`#81 <https://github.com/ros2/rcpputils/issues/81>`_)
+* filesystem helpers: adding remove_all to remove non-empty directories (`#79 <https://github.com/ros2/rcpputils/issues/79>`_)
+* Contributors: Alejandro Hernández Cordero, Christophe Bedard, Hunter L. Allen, Karsten Knese, Victor Lopez
+
+1.2.0 (2020-06-26)
+------------------
+* Add scope_exit helper (`#78 <https://github.com/ros2/rcpputils/issues/78>`_)
+* Bump setup-ros to 0.0.23, action-ros-lint to 0.0.6, action-ros-ci to 0.0.17 (`#77 <https://github.com/ros2/rcpputils/issues/77>`_)
+* Contributors: Devin Bonnie, Michel Hidalgo
 
 1.1.0 (2020-06-22)
 ------------------
