@@ -1,44 +1,39 @@
 // Copyright (c) 2019, Open Source Robotics Foundation, Inc.
-// All rights reserved.
-//
-// Software License Agreement (BSD License 2.0)
 //
 // Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
+// modification, are permitted provided that the following conditions are met:
 //
-//  * Redistributions of source code must retain the above copyright
-//    notice, this list of conditions and the following disclaimer.
-//  * Redistributions in binary form must reproduce the above
-//    copyright notice, this list of conditions and the following
-//    disclaimer in the documentation and/or other materials provided
-//    with the distribution.
-//  * Neither the name of the copyright holders nor the names of its
-//    contributors may be used to endorse or promote products derived
-//    from this software without specific prior written permission.
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the copyright holder nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-//
+
 // This file is originally from:
 // https://github.com/ros/pluginlib/blob/1a4de29fa55173e9b897ca8ff57ebc88c047e0b3/pluginlib/include/pluginlib/impl/filesystem_helper.hpp
 
 /*! \file filesystem_helper.hpp
  * \brief Cross-platform filesystem helper functions and additional emulation of [std::filesystem](https://en.cppreference.com/w/cpp/filesystem).
  *
- * If std::filesystem is not available the necessary functions are emulated.
  * Note: Once std::filesystem is supported on all ROS2 platforms, this class
- * can be deprecated in favor of the built-in functionality.
+ * can be deprecated/removed in favor of the built-in functionality.
  */
 
 #ifndef RCPPUTILS__FILESYSTEM_HELPER_HPP_
@@ -77,6 +72,7 @@
 #endif
 
 #include "rcpputils/split.hpp"
+#include "rcutils/get_env.h"
 
 namespace rcpputils
 {
@@ -107,10 +103,11 @@ public:
    * \param p A string path split by the platform's string path separator.
    */
   path(const std::string & p)  // NOLINT(runtime/explicit): this is a conversion constructor
-  : path_(p), path_as_vector_(split(p, kPreferredSeparator))
+  : path_(p)
   {
     std::replace(path_.begin(), path_.end(), '\\', kPreferredSeparator);
     std::replace(path_.begin(), path_.end(), '/', kPreferredSeparator);
+    path_as_vector_ = split(path_, kPreferredSeparator);
   }
 
   /**
@@ -223,7 +220,7 @@ public:
   bool is_absolute() const
   {
     return path_.size() > 0 &&
-           (path_.compare(0, 1, std::string(1, kPreferredSeparator)) == 0 ||
+           (path_[0] == kPreferredSeparator ||
            this->is_absolute_with_drive_letter());
   }
 
@@ -280,10 +277,13 @@ public:
 
     path parent;
     for (auto it = this->cbegin(); it != --this->cend(); ++it) {
-      if (!parent.empty() || it->empty()) {
-        parent /= *it;
-      } else {
+      if (parent.empty() && (!this->is_absolute() || this->is_absolute_with_drive_letter())) {
+        // This handles the case where we are dealing with a relative path or
+        // the Windows drive letter; in both cases we don't want a separator at
+        // the beginning, so just copy the piece directly.
         parent = *it;
+      } else {
+        parent /= *it;
       }
     }
     return parent;
@@ -359,7 +359,13 @@ public:
       this->path_ = other.path_;
       this->path_as_vector_ = other.path_as_vector_;
     } else {
-      this->path_ += kPreferredSeparator + other.string();
+      if (this->path_[this->path_.length() - 1] != kPreferredSeparator) {
+        // This ensures that we don't put duplicate separators into the path;
+        // this can happen, for instance, on absolute paths where the first
+        // item in the vector is the empty string.
+        this->path_ += kPreferredSeparator;
+      }
+      this->path_ += other.string();
       this->path_as_vector_.insert(
         std::end(this->path_as_vector_),
         std::begin(other.path_as_vector_), std::end(other.path_as_vector_));
@@ -451,8 +457,9 @@ inline path temp_directory_path()
   }
   temp_path[size] = '\0';
 #else
-  const char * temp_path = getenv("TMPDIR");
-  if (!temp_path) {
+  const char * temp_path = NULL;
+  const char * ret_str = rcutils_get_env("TMPDIR", &temp_path);
+  if (NULL != ret_str || *temp_path == '\0') {
     temp_path = "/tmp";
   }
 #endif
