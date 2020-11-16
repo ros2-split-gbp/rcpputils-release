@@ -286,6 +286,7 @@ TEST(TestFilesystemHelper, filesystem_manipulation)
   EXPECT_TRUE(rcpputils::fs::exists(file));
   EXPECT_TRUE(rcpputils::fs::is_regular_file(file));
   EXPECT_FALSE(rcpputils::fs::is_directory(file));
+  EXPECT_FALSE(rcpputils::fs::create_directories(file));
   EXPECT_GE(rcpputils::fs::file_size(file), expected_file_size);
   EXPECT_THROW(rcpputils::fs::file_size(dir), std::system_error) <<
     "file_size is only applicable for files!";
@@ -352,6 +353,9 @@ TEST(TestFilesystemHelper, filesystem_manipulation)
     ASSERT_FALSE(rcpputils::fs::exists(file));
   }
   ASSERT_FALSE(rcpputils::fs::exists(dir));
+
+  // Empty path/directory cannot be created
+  EXPECT_FALSE(rcpputils::fs::create_directories(rcpputils::fs::path("")));
 }
 
 TEST(TestFilesystemHelper, remove_extension)
@@ -387,4 +391,37 @@ TEST(TestFilesystemHelper, get_cwd)
   std::string expected_dir = rcpputils::get_env_var("EXPECTED_WORKING_DIRECTORY");
   auto p = rcpputils::fs::current_path();
   EXPECT_EQ(expected_dir, p.string());
+}
+
+TEST(TestFilesystemHelper, parent_absolute_path)
+{
+  rcpputils::fs::path path("/home/foo/bar/baz");
+  if (is_win32) {
+    ASSERT_EQ(path.string(), "\\home\\foo\\bar\\baz");
+  } else {
+    ASSERT_EQ(path.string(), "/home/foo/bar/baz");
+  }
+
+  rcpputils::fs::path parent = path.parent_path();
+  if (is_win32) {
+    ASSERT_EQ(parent.string(), "\\home\\foo\\bar");
+  } else {
+    ASSERT_EQ(parent.string(), "/home/foo/bar");
+  }
+
+  rcpputils::fs::path grandparent = parent.parent_path();
+  if (is_win32) {
+    ASSERT_EQ(grandparent.string(), "\\home\\foo");
+  } else {
+    ASSERT_EQ(grandparent.string(), "/home/foo");
+  }
+
+  if (is_win32) {
+    rcpputils::fs::path win_drive_letter("C:\\home\\foo\\bar");
+    ASSERT_EQ(win_drive_letter.string(), "C:\\home\\foo\\bar");
+    rcpputils::fs::path win_parent = win_drive_letter.parent_path();
+    ASSERT_EQ(win_parent.string(), "C:\\home\\foo");
+    rcpputils::fs::path win_grandparent = win_parent.parent_path();
+    ASSERT_EQ(win_grandparent.string(), "C:\\home");
+  }
 }
