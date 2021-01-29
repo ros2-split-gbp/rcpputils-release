@@ -66,6 +66,15 @@ TEST(TestFilesystemHelper, join_path)
     auto p = path("foo") / path("/bar");
     EXPECT_EQ("/bar", p.string());
   }
+
+  {
+    // Just expect these join operations to be allowed with const paths
+    const auto p1 = path("foo");
+    auto p1_baz = p1 / "baz";
+
+    const auto p2 = path("bar");
+    auto p1_2 = p1 / p2;
+  }
 }
 
 TEST(TestFilesystemHelper, parent_path)
@@ -424,4 +433,12 @@ TEST(TestFilesystemHelper, parent_absolute_path)
     rcpputils::fs::path win_grandparent = win_parent.parent_path();
     ASSERT_EQ(win_grandparent.string(), "C:\\home");
   }
+}
+
+TEST(TestFilesystemHelper, stream_operator)
+{
+  path p{"foo"};
+  std::stringstream s;
+  s << "bar" << p;
+  ASSERT_EQ(s.str(), "barfoo");
 }
