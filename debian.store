@@ -1,1 +1,1 @@
-{"base": "050592f", "parent": "debian/rolling/rcpputils", "previous": "d87fce6", "trim": "", "trimbase": ""}
+{"base": "77b85c0", "parent": "debian/galactic/rcpputils", "previous": "65decb4", "trim": "", "trimbase": ""}
