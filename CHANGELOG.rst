@@ -2,66 +2,26 @@
 Changelog for package rcpputils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.2.0 (2021-04-02)
+1.3.2 (2021-08-31)
 ------------------
-* Update quality declaration links (`#130 <https://github.com/ros2/rcpputils/issues/130>`_)
-* Add functions for getting library path and filename (`#128 <https://github.com/ros2/rcpputils/issues/128>`_)
-* Contributors: Nikolai Morin, Simon Honigmann
+* Add stream operator for paths to make it easier to log (`#120 <https://github.com/ros2/rcpputils/issues/120>`_) (`#121 <https://github.com/ros2/rcpputils/issues/121>`_)
+* Removed Github Actions (`#105 <https://github.com/ros2/rcpputils/issues/105>`_) (`#106 <https://github.com/ros2/rcpputils/issues/106>`_)
+* Updating quality declaration links (`ros2/docs.ros2.org#52 <https://github.com/ros2/docs.ros2.org/issues/52>`_) (`#131 <https://github.com/ros2/rcpputils/issues/131>`_)
+* Update to quality level 1 (`#115 <https://github.com/ros2/rcpputils/issues/115>`_)
+* Update maintainer list for Foxy (`#109 <https://github.com/ros2/rcpputils/issues/109>`_)
+* Contributors: Alejandro Hernández Cordero, Emerson Knapp, Michael Jeronimo, Stephen Brawner, shonigmann
 
-2.1.0 (2021-03-01)
+1.3.1 (2020-10-09)
 ------------------
-* Add path equality operators (`#127 <https://github.com/ros2/rcpputils/issues/127>`_)
-* Add create_temp_directory filesystem helper (`#126 <https://github.com/ros2/rcpputils/issues/126>`_)
-* Use new noexcept specifier. (`#123 <https://github.com/ros2/rcpputils/issues/123>`_)
-* Contributors: Chen Lihui, Emerson Knapp
+* Add scope_exit helper. (`#78 <https://github.com/ros2/rcpputils//issues/78>`_) (`#103 <https://github.com/ros2/rcpputils//issues/103>`_)
+* Contributors: Alejandro Hernández Cordero, Michel Hidalgo
 
-2.0.4 (2021-01-25)
+1.3.0 (2020-07-21)
 ------------------
-* Add stream operator for paths to make it easier to log (`#120 <https://github.com/ros2/rcpputils/issues/120>`_)
-* Path join operator is const (`#119 <https://github.com/ros2/rcpputils/issues/119>`_)
-* No windows.h in header files (`#118 <https://github.com/ros2/rcpputils/issues/118>`_)
-* Fix rcpputils::SharedLibrary tests. (`#117 <https://github.com/ros2/rcpputils/issues/117>`_)
-* Contributors: Emerson Knapp, Ivan Santiago Paunovic, Michel Hidalgo
-
-2.0.3 (2020-12-08)
-------------------
-* Update QD to QL 1 (`#114 <https://github.com/ros2/rcpputils/issues/114>`_)
-* Make sure to not try to index into an empty path. (`#113 <https://github.com/ros2/rcpputils/issues/113>`_)
-* Contributors: Chris Lalancette, Stephen Brawner
-
-2.0.2 (2020-11-16)
-------------------
-* Fix working with filesystem parent paths. (`#112 <https://github.com/ros2/rcpputils/issues/112>`_)
-* Cleanup mislabeled BSD license (`#37 <https://github.com/ros2/rcpputils/issues/37>`_)
-* overload functions for has_symbol and get_symbol with raw string literal (`#110 <https://github.com/ros2/rcpputils/issues/110>`_)
-* Add an ASSERT to the pointer traits tests. (`#111 <https://github.com/ros2/rcpputils/issues/111>`_)
-* replace custom get env login into rcutils_get_env(). (`#99 <https://github.com/ros2/rcpputils/issues/99>`_)
-* Removed Github Actions (`#105 <https://github.com/ros2/rcpputils/issues/105>`_)
-* Update the package.xml files with the latest Open Robotics maintainers (`#102 <https://github.com/ros2/rcpputils/issues/102>`_)
-* Contributors: Alejandro Hernández Cordero, Chen Lihui, Chris Lalancette, Michael Jeronimo, Tully Foote, tomoya
-
-2.0.1 (2020-10-05)
-------------------
-* Make sure that an existing path is a directory for create_directories (`#98 <https://github.com/ros2/rcpputils/issues/98>`_)
-* Transfer ownership to Open Robotics (`#100 <https://github.com/ros2/rcpputils/issues/100>`_)
-* Ensure -fPIC is used when building a static lib (`#93 <https://github.com/ros2/rcpputils/issues/93>`_)
-* Contributors: Christophe Bedard, Dirk Thomas, Louise Poubel, William Woodall
-
-2.0.0 (2020-07-21)
-------------------
-* Removed doxygen warnings (`#86 <https://github.com/ros2/rcpputils/issues/86>`_) (`#87 <https://github.com/ros2/rcpputils/issues/87>`_)
-* Add clamp header (`#85 <https://github.com/ros2/rcpputils/issues/85>`_)
-* Removed doxygen warnings (`#86 <https://github.com/ros2/rcpputils/issues/86>`_)
-* Split get_env_var() into header and implementation (`#83 <https://github.com/ros2/rcpputils/issues/83>`_)
-* Add cstring include for strcmp (`#81 <https://github.com/ros2/rcpputils/issues/81>`_)
-* filesystem helpers: adding remove_all to remove non-empty directories (`#79 <https://github.com/ros2/rcpputils/issues/79>`_)
-* Contributors: Alejandro Hernández Cordero, Christophe Bedard, Hunter L. Allen, Karsten Knese, Victor Lopez
-
-1.2.0 (2020-06-26)
-------------------
-* Add scope_exit helper (`#78 <https://github.com/ros2/rcpputils/issues/78>`_)
-* Bump setup-ros to 0.0.23, action-ros-lint to 0.0.6, action-ros-ci to 0.0.17 (`#77 <https://github.com/ros2/rcpputils/issues/77>`_)
-* Contributors: Devin Bonnie, Michel Hidalgo
+* Removed doxygen warnings (`#86 <https://github.com/ros2/rcpputils/issues/86>`_) (`#90 <https://github.com/ros2/rcpputils/issues/90>`_)
+* Add clamp header (`#85 <https://github.com/ros2/rcpputils/issues/85>`_) (`#88 <https://github.com/ros2/rcpputils/issues/88>`_)
+* Add remove_all to remove non-empty directories… (`#80 <https://github.com/ros2/rcpputils/issues/80>`_)
+* Contributors: Alejandro Hernández Cordero, Hunter L. Allen, Karsten Knese, Victor Lopez
 
 1.1.0 (2020-06-22)
 ------------------
