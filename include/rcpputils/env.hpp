@@ -30,16 +30,38 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef RCPPUTILS__GET_ENV_HPP_
-#define RCPPUTILS__GET_ENV_HPP_
+#ifndef RCPPUTILS__ENV_HPP_
+#define RCPPUTILS__ENV_HPP_
 
-#ifdef _MSC_VER
-#pragma message \
-  ("rcpputils/get_env.hpp has been deprecated, please include rcpputils/env.hpp instead")
-#else
-#warning rcpputils/get_env.hpp has been deprecated, please include rcpputils/env.hpp instead
-#endif
+#include <string>
 
-#include "rcpputils/env.hpp"
+#include "rcpputils/visibility_control.hpp"
 
-#endif  // RCPPUTILS__GET_ENV_HPP_
+namespace rcpputils
+{
+
+/// Retrieve the value of the given environment variable if it exists, or "".
+/*
+ * \param[in] env_var the name of the environment variable
+ * \return The value of the environment variable if it exists, or "".
+ * \throws std::runtime_error on error
+ */
+RCPPUTILS_PUBLIC
+std::string get_env_var(const char * env_var);
+
+/// Set/un-set a process-scoped environment variable.
+/*
+ *  \param[in] env_var The name of the environment variable.
+ *  \param[in] env_value Value to set the environment variable to, or `NULL`
+ *    to un-set.
+ *  \return Boolean representing whether the operation was successful.
+ *  \throws std::runtime_error if env_name is invalid/NULL, or if setting
+ *    the environment variable fails.
+ *
+ */
+RCPPUTILS_PUBLIC
+bool set_env_var(const char * env_var, const char * env_value);
+
+}  // namespace rcpputils
+
+#endif  // RCPPUTILS__ENV_HPP_

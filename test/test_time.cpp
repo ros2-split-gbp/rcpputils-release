@@ -1,4 +1,4 @@
-// Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2021 Open Source Robotics Foundation, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rcpputils/asserts.hpp"
+#include <gtest/gtest.h>
 
-namespace rcpputils
-{
-AssertionException::AssertionException(const char * msg)
-{
-  msg_ = msg;
-}
+#include <rcpputils/time.hpp>
 
-const char * AssertionException::what() const noexcept
-{
-  return msg_.c_str();
-}
+TEST(test_time, test_convert_to_nanoseconds) {
+  rcutils_duration_value_t expect_value = RCUTILS_S_TO_NS(5 * 60);  // 5 minutes
+  rcutils_duration_value_t cast_val = 0;
+  EXPECT_NO_THROW(
+    cast_val = rcpputils::convert_to_nanoseconds(std::chrono::duration<double>(5 * 60)).count());
+  EXPECT_EQ(cast_val, expect_value);
 
-IllegalStateException::IllegalStateException(const char * msg)
-{
-  msg_ = msg;
+  EXPECT_THROW(
+    rcpputils::convert_to_nanoseconds(std::chrono::hours(10000000)),
+    std::invalid_argument);
 }
-
-const char * IllegalStateException::what() const noexcept
-{
-  return msg_.c_str();
-}
-}  // namespace rcpputils

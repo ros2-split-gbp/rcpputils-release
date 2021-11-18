@@ -10,7 +10,7 @@ Below are the rationales, notes, and caveats for this claim, organized by each r
 
 ### Version Scheme [1.i]
 
-`rcpputils` uses `semver` according to the recommendation for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/foxy/Contributing/Developer-Guide.html#versioning).
+`rcpputils` uses `semver` according to the recommendation for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#versioning).
 
 ### Version Stability [1.ii]
 
@@ -33,7 +33,7 @@ All installed headers are in the `include` directory of the package, headers in 
 
 ## Change Control Process [2]
 
-`rcpputils` follows the recommended guidelines for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/foxy/Contributing/Developer-Guide.html#quality-practices).
+`rcpputils` follows the recommended guidelines for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#quality-practices).
 
 ### Change Requests [2.i]
 
@@ -64,7 +64,7 @@ There is documentation for all of the features, and new features require documen
 
 ### Public API Documentation [3.ii]
 
-`rcpputils` has embedded API documentation and it is hosted [here](http://docs.ros2.org/foxy/api/rcpputils/index.html).
+`rcpputils` has embedded API documentation and it is hosted [here](http://docs.ros2.org/latest/api/rcpputils/index.html).
 
 ### License [3.iii]
 
@@ -72,7 +72,7 @@ The license for `rcpputils` is Apache 2.0, and a summary is in each source file,
 
 There is an automated test which runs a linter that ensures each file has a license statement.
 
-Most recent test results can be found [here](http://build.ros2.org/view/Fpr/job/Fpr__rcpputils__ubuntu_focal_amd64/lastBuild/testReport/rcpputils/)
+Most recent test results can be found [here](http://build.ros2.org/view/Rpr/job/Rpr__rcpputils__ubuntu_focal_amd64/lastBuild/testReport/rcpputils/)
 
 ### Copyright Statements [3.iv]
 
@@ -80,7 +80,7 @@ The copyright holders each provide a statement of copyright in each source code 
 
 There is an automated test which runs a linter that ensures each file has at least one copyright statement.
 
-The results of the test can be found [here](http://build.ros2.org/view/Fpr/job/Fpr__rcpputils__ubuntu_focal_amd64/lastBuild/testReport/rcpputils/copyright/).
+The results of the test can be found [here](http://build.ros2.org/view/Rpr/job/Rpr__rcpputils__ubuntu_focal_amd64/lastBuild/testReport/rcpputils/copyright/).
 
 ## Testing [4]
 
@@ -96,7 +96,7 @@ The tests aim to cover both typical usage and corner cases, but are quantified b
 
 ### Coverage [4.iii]
 
-`rcpputils` follows the recommendations for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/foxy/Contributing/Developer-Guide.html#code-coverage), and opts to use line coverage instead of branch coverage.
+`rcpputils` follows the recommendations for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#code-coverage), and opts to use line coverage instead of branch coverage.
 
 This includes:
 
@@ -106,31 +106,31 @@ This includes:
 
 Changes are required to make a best effort to keep or increase coverage before being accepted, but decreases are allowed if properly justified and accepted by reviewers.
 
-Current coverage statistics can be viewed [here](https://ci.ros2.org/job/nightly_linux_foxy_coverage/lastCompletedBuild/cobertura/).
-A description of how coverage statistics are summarized from this page, can be found in the ["ROS 2 Onboarding Guide"](https://docs.ros.org/en/foxy/Contributing/Developer-Guide.html#note-on-coverage-runs).
+Current coverage statistics can be viewed [here](https://ci.ros2.org/job/nightly_linux_coverage/lastCompletedBuild/cobertura/).
+A description of how coverage statistics are summarized from this page, can be found in the ["ROS 2 Onboarding Guide"](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#note-on-coverage-runs).
 
 ### Performance [4.iv]
 
-`rcpputils` follows the recommendations for performance testing of C/C++ code in the [ROS 2 Developer Guide](https://docs.ros.org/en/foxy/Contributing/Developer-Guide.html#performance), and opts to do performance analysis on each release rather than each change.
+`rcpputils` follows the recommendations for performance testing of C/C++ code in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#performance), and opts to do performance analysis on each release rather than each change.
 
 System level performance benchmarks that cover features of `rcpputils` can be found at:
-* [Benchmarks](http://build.ros2.org/view/Fci/job/Fci__benchmark_ubuntu_focal_amd64/BenchmarkTable/)
-* [Performance](http://build.ros2.org/view/Fci/job/Fci__nightly-performance_ubuntu_focal_amd64/lastCompletedBuild/)
+* [Benchmarks](http://build.ros2.org/view/Rci/job/Rci__benchmark_ubuntu_focal_amd64/BenchmarkTable/)
+* [Performance](http://build.ros2.org/view/Rci/job/Rci__nightly-performance_ubuntu_focal_amd64/lastCompletedBuild/)
 
 Changes that introduce regressions in performance must be adequately justified in order to be accepted and merged.
 
 ### Linters and Static Analysis [4.v]
 
-`rcpputils` uses and passes all the standard linters and static analysis tools for a C++ package as described in the [ROS 2 Developer Guide](https://docs.ros.org/en/foxy/Contributing/Developer-Guide.html#linters-and-static-analysis).
+`rcpputils` uses and passes all the standard linters and static analysis tools for a C++ package as described in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#linters-and-static-analysis).
 
-Results of the nightly linter tests can be found [here](http://build.ros2.org/view/Fpr/job/Fpr__rcpputils__ubuntu_focal_amd64/lastBuild/testReport/rcpputils/).
+Results of the nightly linter tests can be found [here](http://build.ros2.org/view/Rpr/job/Rpr__rcpputils__ubuntu_focal_amd64/lastBuild/testReport/rcpputils/).
 
 ## Dependencies [5]
 
 ### Direct Runtime ROS Dependencies [5.i]/[5.ii]
 
 `rcpputils` has the following runtime ROS dependency, which is at **Quality Level 1**.
-* `rcutils`: [QUALITY DECLARATION](https://github.com/ros2/rcutils/blob/foxy/QUALITY_DECLARATION.md)
+* `rcutils`: [QUALITY DECLARATION](https://github.com/ros2/rcutils/blob/master/QUALITY_DECLARATION.md)
 
 It has several "buildtool" dependencies, which do not affect the resulting quality of the package, because they do not contribute to the public library API.
 It also has several test dependencies, which do not affect the resulting quality of the package, because they are only used to build and run the test code.
@@ -143,11 +143,11 @@ It also has several test dependencies, which do not affect the resulting quality
 
 `rcpputils` supports all of the tier 1 platforms as described in [REP-2000](https://www.ros.org/reps/rep-2000.html#support-tiers), and tests each change against all of them.
 
-Though there are no nightly jobs for foxy outside of linux, each change is tested on ci.ros2.org.
-* [linux-aarch64](https://ci.ros2.org/job/ci_linux-aarch64)
-* [linux](https://ci.ros2.org/job/ci_linux)
-* [mac_osx](https://ci.ros2.org/job/ci_osx)
-* [windows](https://ci.ros2.org/job/ci_windows)
+Currently nightly results can be seen here:
+* [linux-aarch64_release](https://ci.ros2.org/view/nightly/job/nightly_linux-aarch64_release/lastBuild/testReport/rcpputils/)
+* [linux_release](https://ci.ros2.org/view/nightly/job/nightly_linux_release/lastBuild/testReport/rcpputils/)
+* [mac_osx_release](https://ci.ros2.org/view/nightly/job/nightly_osx_release/lastBuild/testReport/rcpputils/)
+* [windows_release](https://ci.ros2.org/view/nightly/job/nightly_win_rel/lastBuild/testReport/rcpputils/)
 
 ## Vulnerability Disclosure Policy [7.i]
 

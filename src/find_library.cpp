@@ -23,10 +23,10 @@
 #include <vector>
 
 #include "rcutils/filesystem.h"
-#include "rcutils/get_env.h"
 
+#include "rcpputils/filesystem_helper.hpp"
 #include "rcpputils/split.hpp"
-#include "rcpputils/get_env.hpp"
+#include "rcpputils/env.hpp"
 
 namespace rcpputils
 {
@@ -58,8 +58,7 @@ std::string find_library_path(const std::string & library_name)
   std::string search_path = get_env_var(kPathVar);
   std::vector<std::string> search_paths = rcpputils::split(search_path, kPathSeparator);
 
-  std::string filename = kSolibPrefix;
-  filename += library_name + kSolibExtension;
+  std::string filename = filename_for_library(library_name);
 
   for (const auto & search_path : search_paths) {
     std::string path = search_path + "/" + filename;
@@ -68,6 +67,20 @@ std::string find_library_path(const std::string & library_name)
     }
   }
   return "";
+}
+
+std::string path_for_library(const std::string & directory, const std::string & library_name)
+{
+  auto path = rcpputils::fs::path(directory) / filename_for_library(library_name);
+  if (path.is_regular_file()) {
+    return path.string();
+  }
+  return "";
+}
+
+std::string filename_for_library(const std::string & library_name)
+{
+  return kSolibPrefix + library_name + kSolibExtension;
 }
 
 }  // namespace rcpputils
