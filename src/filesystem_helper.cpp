@@ -60,7 +60,7 @@
 #  include <unistd.h>
 #endif
 
-#include "rcutils/env.h"
+#include "rcutils/get_env.h"
 #include "rcpputils/split.hpp"
 
 namespace rcpputils

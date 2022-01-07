@@ -63,8 +63,7 @@ public:
   has_symbol(const char * symbol_name);
 
   /**
-   * \param[in] symbol_name name of the symbol inside the shared library
-   * \return if symbols exists returns true, otherwise returns false.
+   * @copydoc SharedLibrary::has_symbol(const char *)
    */
   RCPPUTILS_PUBLIC
   bool
@@ -81,12 +80,8 @@ public:
   void *
   get_symbol(const char * symbol_name);
 
-  /// Return shared library symbol pointer.
   /**
-   * \param[in] symbol_name name of the symbol inside the shared library
-   * \return shared library symbol pointer, if the symbol doesn't exist then throws a
-   * runtime_error exception
-   * \throws std::runtime_error if the symbol doesn't exist in the shared library
+   * @copydoc SharedLibrary::get_symbol(const char *)
    */
   RCPPUTILS_PUBLIC
   void *
