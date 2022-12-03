@@ -20,17 +20,17 @@
 #endif
 #endif
 
+#include <rcppmath/rolling_mean_accumulator.hpp>
+
+#include <gtest/gtest.h>
 #include <cmath>
 #include <memory>
 
-#include "gtest/gtest.h"
-
-#include "rcpputils/rolling_mean_accumulator.hpp"
 
 TEST(TestAccumulator, test_accumulator)
 {
   constexpr double THRESHOLD = 1e-12;
-  rcpputils::RollingMeanAccumulator<double> accum(4);
+  rcppmath::RollingMeanAccumulator<double> accum(4);
 
   accum.accumulate(1.);
   EXPECT_NEAR(1., accum.getRollingMean(), THRESHOLD);
@@ -55,7 +55,7 @@ TEST(TestAccumulator, test_accumulator)
 TEST(TestAccumulator, spam_accumulator)
 {
   constexpr double THRESHOLD = 1e-12;
-  rcpputils::RollingMeanAccumulator<double> accum(10);
+  rcppmath::RollingMeanAccumulator<double> accum(10);
   for (int i = 0; i < 10000; ++i) {
     accum.accumulate(M_PI);
     EXPECT_NEAR(M_PI, accum.getRollingMean(), THRESHOLD);

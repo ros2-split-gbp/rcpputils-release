@@ -10,9 +10,9 @@ find_package(rcutils REQUIRED)
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 11)
 endif()
-# Default to C++17
+# Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -23,28 +23,26 @@ if(NOT WIN32)
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+include_directories(include)
+
+ament_export_include_directories(include)
+
 add_library(${PROJECT_NAME}
   src/asserts.cpp
   src/filesystem_helper.cpp
   src/find_library.cpp
-  src/env.cpp
+  src/get_env.cpp
   src/shared_library.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+  "$<INSTALL_INTERFACE:include>")
 if(WIN32)
   target_compile_definitions(${PROJECT_NAME}
     PRIVATE "RCPPUTILS_BUILDING_LIBRARY")
 endif()
 ament_target_dependencies(${PROJECT_NAME} rcutils)
-
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
 ament_export_libraries(${PROJECT_NAME})
-
-# Export modern CMake targets
 ament_export_targets(${PROJECT_NAME})
-
 ament_export_dependencies(rcutils)
 
 if(BUILD_TESTING)
@@ -68,28 +66,21 @@ if(BUILD_TESTING)
   target_link_libraries(test_asserts_debug ${PROJECT_NAME})
 
   ament_add_gtest(test_thread_safety_annotations test/test_thread_safety_annotations.cpp)
-  target_link_libraries(test_thread_safety_annotations ${PROJECT_NAME})
 
   ament_add_gtest(test_join test/test_join.cpp)
-  target_link_libraries(test_join ${PROJECT_NAME})
 
-  ament_add_gtest(test_time test/test_time.cpp)
-  target_link_libraries(test_time ${PROJECT_NAME})
-  ament_target_dependencies(test_time rcutils)
-
-  ament_add_gtest(test_env test/test_env.cpp
+  ament_add_gtest(test_get_env test/test_get_env.cpp
     ENV
       EMPTY_TEST=
       NORMAL_TEST=foo
   )
-  ament_target_dependencies(test_env rcutils)
-  target_link_libraries(test_env ${PROJECT_NAME})
+  ament_target_dependencies(test_get_env rcutils)
+  target_link_libraries(test_get_env ${PROJECT_NAME})
 
   ament_add_gtest(test_scope_exit test/test_scope_exit.cpp)
   target_link_libraries(test_scope_exit ${PROJECT_NAME})
 
   ament_add_gtest(test_split test/test_split.cpp)
-  target_link_libraries(test_split ${PROJECT_NAME})
 
   ament_add_gtest(test_filesystem_helper test/test_filesystem_helper.cpp
     ENV
@@ -99,13 +90,10 @@ if(BUILD_TESTING)
   target_link_libraries(test_filesystem_helper ${PROJECT_NAME})
 
   ament_add_gtest(test_find_and_replace test/test_find_and_replace.cpp)
-  target_link_libraries(test_find_and_replace ${PROJECT_NAME})
 
   ament_add_gtest(test_pointer_traits test/test_pointer_traits.cpp)
-  target_link_libraries(test_pointer_traits ${PROJECT_NAME})
 
   ament_add_gtest(test_process test/test_process.cpp)
-  target_link_libraries(test_process ${PROJECT_NAME})
   ament_target_dependencies(test_process rcutils)
 
   set(append_library_dirs "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
@@ -125,28 +113,24 @@ if(BUILD_TESTING)
   endif()
 
   ament_add_gtest(test_endian test/test_endian.cpp)
-  target_link_libraries(test_endian ${PROJECT_NAME})
 
   add_library(test_library SHARED test/test_library.cpp)
-  target_link_libraries(test_library PUBLIC ${PROJECT_NAME})
   ament_add_gtest(test_find_library test/test_find_library.cpp)
-  target_link_libraries(test_find_library test_library)
+  target_link_libraries(test_find_library ${PROJECT_NAME} test_library)
   set_tests_properties(test_find_library PROPERTIES
     ENVIRONMENT
       "_TEST_LIBRARY_DIR=$<TARGET_FILE_DIR:test_library>;_TEST_LIBRARY=$<TARGET_FILE:test_library>")
 
   ament_add_gtest(test_clamp test/test_clamp.cpp)
-  target_link_libraries(test_clamp ${PROJECT_NAME})
 
   ament_add_gtest(test_accumulator test/test_accumulator.cpp)
-  target_link_libraries(test_accumulator ${PROJECT_NAME})
 endif()
 
 ament_package()
 
 install(
   DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME})
+  DESTINATION include)
 install(
   TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}
   ARCHIVE DESTINATION lib

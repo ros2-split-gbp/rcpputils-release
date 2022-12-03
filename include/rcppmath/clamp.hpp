@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*! \file clamp.hpp
- *  \brief Restrict a value between two bounds.
+ * \brief Restrict a value between two bounds
  */
 
 #ifndef RCPPMATH__CLAMP_HPP_
@@ -23,43 +23,31 @@
 
 namespace rcppmath
 {
+/// If v compares less than lo, returns lo; otherwise if hi compares less
+//  than v, returns hi; otherwise returns v. Uses operator< to compare the values
 /**
- * If v compares less than lo, returns lo; otherwise if hi compares less
- * than v, returns hi; otherwise returns v. Uses operator< to compare the values.
- *
- * \param[in] v The value to clamp.
- * \param[in] lo The lower boundary.
- * \param[in] hi The higher boundary.
+ * \param[in] v the value to clamp
+ * \param[in] lo the lower boundary
+ * \param[in] hi the higher boundary
  * \return Reference to lo if v is less than lo, reference to hi if hi is less than v, otherwise
  * reference to v.
- * \note Implementation from https://en.cppreference.com/w/cpp/algorithm/clamp.
+ * \note Implementation from https://en.cppreference.com/w/cpp/algorithm/clamp
  * \warning Capturing the result of clamp by reference if one of the parameters is rvalue produces
- *  a dangling reference if that parameter is returned.
- */
+ *  a dangling reference if that parameter is returned
+ **/
 template<class T>
-[[deprecated("use std::clamp instead, introduced in C++17")]]
 constexpr const T & clamp(const T & v, const T & lo, const T & hi)
 {
   assert(!(hi < lo) );
   return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
+/// Like the function above, but uses comp to compare the values.
 /**
- * Performs clamping with a provided Comparison object (comp).
- *
- * \param[in] v The value to clamp.
- * \param[in] lo The lower boundary.
- * \param[in] hi The higher boundary.
  * \param[in] comp Comparison object that returns true if the first argument is
- * less than the second.
- * \return Reference to lo if v is less than lo, reference to hi if hi is less than v, otherwise
- * reference to v. "Less than" semantics determined by Comparison object.
- * \warning Capturing the result of clamp by reference if one of the parameters is rvalue produces
- * a dangling reference if that parameter is returned.
- * \sa rcppmath::clamp(const T&, const T&, const T&)
- */
+ * less than the second
+ **/
 template<class T, class Compare>
-[[deprecated("use std::clamp instead, introduced in C++17")]]
 constexpr const T & clamp(const T & v, const T & lo, const T & hi, Compare comp)
 {
   assert(!comp(hi, lo) );
