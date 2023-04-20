@@ -1,0 +1,12 @@
+Source: ros-iron-rcpputils
+Section: misc
+Priority: optional
+Maintainer: Brandon Ong <brandon@openrobotics.org>
+Build-Depends: debhelper (>= 9.0.0), ros-iron-ament-cmake, ros-iron-ament-cmake-gtest <!nocheck>, ros-iron-ament-cmake-ros, ros-iron-ament-lint-auto <!nocheck>, ros-iron-ament-lint-common <!nocheck>, ros-iron-rcutils, ros-iron-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-iron-rcpputils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-iron-rcutils, ros-iron-ros-workspace
+Description: Package containing utility code for C++.
