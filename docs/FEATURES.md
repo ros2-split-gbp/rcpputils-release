@@ -1,7 +1,6 @@
 # rcpputils Features
 
-This package includes convenience functions for cross-platform c++ functionality and for mathematical utilties.
-These functionalities are siloed into the `rcpputils` namespace:
+This package includes convenience functions for cross-platform c++ functionality and for mathematical utilties. These functionalities are siloed into the `rcpputils` and the `rcppmath` namespaces respectively:
 * [`rcpputils` - General convenience functions](#rcpputils-general-convenience-functions)
   * [Assertion functions](#assertion-functions)
   * [Clang thread safety annotation macros](#clang-thread-safety-annotation-macros)
@@ -15,6 +14,8 @@ These functionalities are siloed into the `rcpputils` namespace:
   * [Process helpers](#process-helpers)
   * [Environment helpers](#environment-helpers)
   * [Scope guard support](#scope-guard-support)
+* [`rcppmath` - Mathematical utilties](#rcppmath-mathematical-utilities)
+  * [Clamping functionality](#clamping-functionality)
   * [Rolling mean accumulator](#rolling-mean-accumulator)
 
 ## `rcpputils` - General convenience functions {#rcpputils-general-convenience-functions}
@@ -141,7 +142,15 @@ release_resource(resource);
 cleanup_resource_handle.cancel();
 ```
 
+## `rcppmath` - Mathematical utilities {#rcppmath-mathematical-utilities}
+### Clamping functionality {#clamping-functionality}
+`rcppmath/clamp.hpp` provides functionality to perform clamping - which restricts a value between two bounds.
+The `rcppmath::clamp()` function is overloaded as follows:
+
+* `rcppmath::clamp(const T &, const T &, const T &)`: Takes a value to clamp, and the lower and upper boundaries to clamp against.
+* `rcppmath::clamp(const T &, const T &, const T &, Compare)`: In addition to the previous signature, accepts a comparison object that returns `true` if its first argument is less than the second.
+
 ### Rolling mean accumulator {#rolling-mean-accumulator}
-The `rcpputils/rolling_mean_accumulator.hpp` facilitates computing the rolling mean of a window of accumulated items.
-The `rcpputils::RollingMeanAccumulator` can be constructed with an unsigned integral `rolling_window_size` value.
-Values can be accumulated and the rolling mean can be obtained through the `rcpputils::RollingMeanAccumulator::accumulate(T)` method and the `rcpputils::RollingMeanAccumulator::getRollingMean()` methods respectively.
+The `rcppmath/rolling_mean_accumulator.hpp` facilitates computing the rolling mean of a window of accumulated items.
+The `rcppmath::RollingMeanAccumulator` can be constructed with an unsigned integral `rolling_window_size` value.
+Values can be accumulated and the rolling mean can be obtained through the `rcppmath::RollingMeanAccumulator::accumulate(T)` method and the `rcppmath::RollingMeanAccumulator::getRollingMean()` methods respectively.

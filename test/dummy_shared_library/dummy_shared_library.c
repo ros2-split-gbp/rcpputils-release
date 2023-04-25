@@ -14,7 +14,7 @@
 
 #include "./dummy_shared_library.h" // NOLINT
 
-void print_name(void)
+void print_name()
 {
   printf("print_name\n");
 }

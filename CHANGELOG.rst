@@ -2,30 +2,10 @@
 Changelog for package rcpputils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.6.1 (2023-02-13)
+2.4.1 (2023-04-25)
 ------------------
-* Add missing header for strlen (`#169 <https://github.com/ros2/rcpputils/issues/169>`_)
-* issue-167 (`#172 <https://github.com/ros2/rcpputils/issues/172>`_)
-* [rolling] Update maintainers - 2022-11-07 (`#166 <https://github.com/ros2/rcpputils/issues/166>`_)
-* Contributors: Audrow Nash, Sebastian Freitag, bijoua29
-
-2.6.0 (2022-11-02)
-------------------
-* require C++17 and deprecate the rcppmath namespace (`#165 <https://github.com/ros2/rcpputils/issues/165>`_)
-* Contributors: William Woodall
-
-2.5.2 (2022-09-13)
-------------------
-* Mirror rolling to master
-* Contributors: Audrow Nash
-
-2.5.1 (2022-05-04)
-------------------
-
-2.5.0 (2022-04-29)
-------------------
-* Fix possible race condition in create_directories() (`#162 <https://github.com/ros2/rcpputils/issues/162>`_)
-* Contributors: Artem Shumov
+* Fix possible race condition in create_directories() (`#162 <https://github.com/ros2/rcpputils/issues/162>`_) (`#176 <https://github.com/ros2/rcpputils/issues/176>`_)
+* Contributors: mergify[bot]
 
 2.4.0 (2022-03-01)
 ------------------
